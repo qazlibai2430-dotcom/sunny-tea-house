@@ -28,6 +28,9 @@ test('DeepSeek 官方地址、服务端认证和正常响应', async () => {
   const output = await callDeepSeek([], { ...config, apiKey: 'test-secret' }, async (url, options) => {
     assert.equal(url, 'https://api.deepseek.com/chat/completions');
     assert.equal(options.headers.Authorization, 'Bearer test-secret');
+    const body = JSON.parse(options.body);
+    assert.equal(body.max_tokens, 800);
+    assert.deepEqual(body.thinking, { type: 'disabled' });
     return Response.json({ choices: [{ message: { content: ' 正常初稿 ' } }] });
   });
   assert.equal(output, '正常初稿');

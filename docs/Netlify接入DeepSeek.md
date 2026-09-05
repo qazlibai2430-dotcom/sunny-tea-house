@@ -14,7 +14,7 @@
 | --- | --- |
 | DEMO_MODE | false |
 | DEEPSEEK_API_KEY | 你的完整 DeepSeek API Key |
-| DEEPSEEK_MODEL | deepseek-chat |
+| DEEPSEEK_MODEL | deepseek-v4-flash |
 
 4. 若能标记 Secret，把 `DEEPSEEK_API_KEY` 标为敏感值。不要勾选在网页中公开，不要改成 `VITE_DEEPSEEK_API_KEY`。
 5. 保存，随后按第二步重新部署。修改环境变量后需要重新部署才保证新函数使用新配置。

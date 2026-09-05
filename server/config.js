@@ -29,7 +29,7 @@ export function readConfig(env = process.env) {
     || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${store.name} ${store.city}`)}`;
   return {
     demo, notify, webhook,
-    apiKey, model: String(env.DEEPSEEK_MODEL || 'deepseek-chat').trim() || 'deepseek-chat',
+    apiKey, model: String(env.DEEPSEEK_MODEL || 'deepseek-v4-flash').trim() || 'deepseek-v4-flash',
     store,
     urls: {
       Google: googleUrl,

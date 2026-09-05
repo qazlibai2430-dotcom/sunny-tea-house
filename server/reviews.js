@@ -67,14 +67,23 @@ export function buildMessages(input, store) {
   return [{ role: 'system', content: system.join('\n') }, { role: 'user', content: user }];
 }
 
-export async function callDeepSeek(messages, config, fetchImpl = fetch, maxTokens = 400) {
+export async function callDeepSeek(messages, config, fetchImpl = fetch, maxTokens = 800) {
   let response;
   try {
     // 密钥只存在于服务端；固定官方 API 地址，不接受浏览器指定任意地址。
     response = await fetchImpl('https://api.deepseek.com/chat/completions', {
       method: 'POST', signal: AbortSignal.timeout(35000),
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${config.apiKey}` },
-      body: JSON.stringify({ model: config.model, messages, temperature: 0.7, max_tokens: maxTokens, stream: false }),
+      body: JSON.stringify({
+        model: config.model,
+        messages,
+        temperature: 0.7,
+        max_tokens: maxTokens,
+        stream: false,
+        // v4 系列默认可能生成较长的内部推理；短评价不需要推理模式，
+        // 否则推理内容会占用输出额度并导致 finish_reason=length。
+        thinking: { type: 'disabled' },
+      }),
     });
   } catch (error) {
     throw new ServiceError(error.name === 'TimeoutError' ? 504 : 502,
