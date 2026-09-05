@@ -20,6 +20,7 @@ const notice = ref('');
 const editor = ref(null);
 const confirmed = ref(false);
 const copying = ref(false);
+const languageOpen = ref(false);
 const platforms = [
   { name: 'Google', mark: 'G', detail: 'googleStyle', className: 'google' },
   { name: '小红书', mark: '小红书', detail: 'redStyle', className: 'red' },
@@ -102,7 +103,7 @@ async function copyAndRedirect() {
         <img src="/sun.svg" width="44" height="44" alt="" />
         <span>{{ config?.store.name || 'Sunny Tea House' }}<small>{{ t('tagline') }}</small></span>
       </a>
-      <div class="header-meta"><label class="locale-control"><span>{{ t('language') }}</span><select id="ui-language" v-model="locale" :aria-label="t('language')"><option v-for="language in LANGUAGES" :key="language.code" :value="language.code">{{ language.label }}</option></select></label><span class="location">{{ config?.store.city || 'San Jose' }} · CA</span><span class="mode-badge">{{ t(config ? config.demo ? 'demo' : 'assistant' : 'connecting') }}</span></div>
+      <div class="header-meta"><div class="language-picker"><button class="globe-button" type="button" :aria-expanded="languageOpen" :aria-label="t('language')" @click="languageOpen = !languageOpen">◎</button><div v-if="languageOpen" class="language-menu" role="menu"><button v-for="language in LANGUAGES" :key="language.code" type="button" :class="{ active: locale === language.code }" role="menuitem" @click="locale = language.code; languageOpen = false">{{ language.label }}</button></div></div><span class="location">{{ config?.store.city || 'San Jose' }} · CA</span></div>
     </header>
 
     <main>
@@ -114,7 +115,7 @@ async function copyAndRedirect() {
       <div v-if="!config" class="connection-message" role="status"><p>{{ t(error || 'preparing') }}</p><button v-if="error" class="secondary" @click="loadConfig">{{ t('reconnect') }}</button></div>
       <div v-else class="workspace">
         <section class="selection-card" :aria-label="t('selection')">
-          <div class="card-kicker"><span>{{ t('start') }}</span><span>{{ t('time') }}</span></div>
+          <div class="card-kicker"><span>{{ t('start') }}</span></div>
           <fieldset :disabled="isLoading">
             <legend><span class="step">01</span> {{ t('feeling') }}</legend>
             <p class="field-hint">{{ t('pick') }}<span>{{ selectedTags.length }}/2</span></p>

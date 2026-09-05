@@ -2,6 +2,8 @@
 
 一个可以直接运行的 Vue 3 + Node.js 项目。虚构店铺位于 San Jose，采用奶油底色、茶绿按钮和日光黄细节，支持桌面与手机。
 
+**Netlify 真实 AI 接入已添加**：如果你使用 `stalwart-zuccutto-b4b018.netlify.app`，请按 [Netlify 接入 DeepSeek](docs/Netlify接入DeepSeek.md) 在后台配置 Key，并双击 `部署到Netlify.cmd` 完整更新前端和函数。原静态 ZIP 只能演示，不能直接启用真实 API。
+
 ## 1. 先启动演示，不需要任何账号或密钥
 
 1. 打开 `D:\Desktop\sunny-tea-house`。
