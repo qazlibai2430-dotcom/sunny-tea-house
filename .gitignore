@@ -8,3 +8,7 @@ playwright-report/
 public-dist/
 *.tar.gz
 out/
+.netlify/
+*.zip
+.openai/
+docs/*.png

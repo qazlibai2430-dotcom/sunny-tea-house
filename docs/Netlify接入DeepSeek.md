@@ -19,6 +19,14 @@
 4. 若能标记 Secret，把 `DEEPSEEK_API_KEY` 标为敏感值。不要勾选在网页中公开，不要改成 `VITE_DEEPSEEK_API_KEY`。
 5. 保存，随后按第二步重新部署。修改环境变量后需要重新部署才保证新函数使用新配置。
 
+### 出现“密钥无效”时按这个顺序检查
+
+1. 在 DeepSeek 控制台确认这枚 Key 仍处于启用状态、属于有余额的账号；如果密钥曾经出现在聊天、截图或代码文件中，请先撤销旧 Key，再新建一枚。
+2. Netlify 变量名必须严格是 `DEEPSEEK_API_KEY`，值只粘贴完整 Key，不要写成 `DEEPSEEK_API_KEY=...`，也不要包含 Markdown 反引号。
+3. 变量的 Scope/Context 必须包含 **Functions + Production**。只勾选 Builds 时，网页能打开但函数拿不到正确密钥。
+4. 保存变量后到 **Deploys → Trigger deploy → Deploy site** 重新部署；仅刷新网页不会让运行中的函数读取新值。
+5. 重新部署后打开 `https://你的站点.netlify.app/api/config`。能返回 JSON 且生成请求仍报 401，通常表示 Key 已撤销、复制不完整或账号余额/权限异常；请在 Netlify Functions 日志确认请求状态。
+
 **线上 Key 不需要修改任何 Vue 文件，也不需要发给助手。** 根目录 `.env` 用于本机运行；修改它不能更新已经上传的静态网站。
 
 ## 第二步：更新已有 Netlify 项目
@@ -51,7 +59,7 @@ npx.cmd netlify deploy --prod --no-build --dir=out --functions=netlify/functions
 - `netlify/functions/shop-config.mjs`：`/api/config`，只返回公开信息。
 - `netlify/functions/reviews.mjs`：`/api/reviews`，平台边缘限流每个 IP/域名每分钟 10 次。
 - `server/netlify-handler.js`：参数检查、读取环境变量、请求 DeepSeek、标准化错误。所有模型请求共用 45 秒预算，以适配 Netlify 同步函数 60 秒运行上限。
-- `src/api.js`：Netlify 构建请求本站 API；原 `build:public` 仍用于无后端的演示。
+- `src/api.js`：请求本站 API（Netlify Functions）。
 - 企业微信仍默认关闭。若启用，通过 `context.waitUntil` 异步通知，但受同一函数时间上限约束，不保证重试送达。
 
 Netlify 免费额度和 DeepSeek API 余额是两回事：真实生成会消耗 DeepSeek 账户余额，使用量也受 Netlify 当前免费套餐额度约束。项目未设置自动付费升级。

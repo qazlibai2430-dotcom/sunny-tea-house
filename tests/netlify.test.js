@@ -16,13 +16,13 @@ test('Netlify 路由和分布式限流配置对应前端接口', () => {
   assert.equal(reviewRouting.rateLimit.windowLimit, 10);
 });
 
-test('Netlify 公开配置不泄露 Key、机器人地址，未配置时仍可演示', async () => {
+test('Netlify 公开配置不泄露 Key、机器人地址，且固定为真实模式', async () => {
   const handler = createNetlifyHandler('config', { getEnv: () => ({ DEEPSEEK_API_KEY: 'private-secret', WECHAT_WEBHOOK_URL: 'private-hook' }) });
   const response = await handler(new Request('https://example.netlify.app/api/config'));
   assert.equal(response.status, 200);
   const text = await response.text();
   assert.ok(!text.includes('private-'));
-  assert.equal(JSON.parse(text).demo, true);
+  assert.equal(JSON.parse(text).demo, false);
   assert.equal(response.headers.get('cache-control'), 'no-store');
 });
 

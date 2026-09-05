@@ -11,7 +11,9 @@ export function createNetlifyHandler(kind, { getEnv = () => process.env, fetchIm
     if (request.method !== method) return json({ error: '请求方法不支持。' }, 405, { Allow: method });
     try {
       // 密钥在每次函数调用时从 Netlify 运行时环境读取，绝不传给前端。
+      // 演示开关在 Netlify 上固定关闭：部署站点始终调用真实 DeepSeek，避免发布演示内容。
       const settings = readConfig(getEnv());
+      settings.demo = false;
       if (kind === 'config') return json({
         store: settings.store, demo: settings.demo, tags: TAGS, urls: settings.urls,
         notificationEnabled: settings.notify && !settings.demo,

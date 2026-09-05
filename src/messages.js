@@ -63,6 +63,7 @@ export const messages = {
   step1: ['选择感受','選擇感受','Choose','Choisir','Elegir'],
   step2: ['编辑初稿','編輯初稿','Edit','Modifier','Editar'],
   step3: ['自主分享','自主分享','Share','Partager','Compartir'],
+  theme: ['切换深浅模式','切換深淺模式','Toggle dark mode','Basculer le mode sombre','Cambiar modo oscuro'],
   fictional: ['虚构店铺体验项目','虛構店鋪體驗專案','Fictional shop demo','Démo d’un commerce fictif','Demostración de tienda ficticia'],
   ready: ['初稿已准备好，请核对并按真实感受修改。','初稿已準備好，請核對並依真實感受修改。','Your draft is ready. Check and edit it to reflect your visit.','Le brouillon est prêt. Vérifiez qu’il reflète votre visite.','Tu borrador está listo. Revísalo y ajústalo a tu experiencia.'],
   copyFailed: ['自动复制不可用，已选中文案。请按 Ctrl+C，或在手机上长按复制，再使用下方平台链接。','自動複製不可用，已選取文案。請按 Ctrl+C，或在手機上長按複製，再使用下方平台連結。','Automatic copying is unavailable. Text selected: use Ctrl+C, Cmd+C or touch and hold, then open the link below.','La copie automatique est indisponible. Utilisez Ctrl+C, Cmd+C ou un appui prolongé, puis le lien ci-dessous.','No se pudo copiar automáticamente. Usa Ctrl+C, Cmd+C o mantén pulsado; luego abre el enlace.'],

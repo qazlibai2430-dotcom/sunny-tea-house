@@ -11,7 +11,10 @@ function platformUrl(value, allowedDomains, name) {
 
 export function readConfig(env = process.env) {
   const demo = env.DEMO_MODE !== 'false';
-  if (!demo && !env.DEEPSEEK_API_KEY?.trim()) throw new Error('真实模式需要填写 DEEPSEEK_API_KEY');
+  // Netlify 控制台粘贴时偶尔会带引号或换行，统一清理后再交给上游。
+  const rawApiKey = String(env.DEEPSEEK_API_KEY || '').trim();
+  const apiKey = rawApiKey.replace(/^(['"])(.*)\1$/s, '$2').trim();
+  if (!demo && !apiKey) throw new Error('真实模式需要填写 DEEPSEEK_API_KEY');
   const notify = env.ENABLE_WECHAT_NOTIFY === 'true';
   const webhook = env.WECHAT_WEBHOOK_URL || '';
   if (notify) {
@@ -20,12 +23,16 @@ export function readConfig(env = process.env) {
       throw new Error('请配置有效的企业微信群机器人 Webhook 地址');
     }
   }
+  const store = { name: env.STORE_NAME || 'Sunny Tea House', city: env.STORE_CITY || 'San Jose' };
+  // Google 未配置商家链接时，默认跳到 Google 地图搜索该店（海外店页面入口）。
+  const googleUrl = platformUrl(env.GOOGLE_REVIEW_URL, ['google.com', 'g.page', 'maps.app.goo.gl'], 'GOOGLE_REVIEW_URL')
+    || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${store.name} ${store.city}`)}`;
   return {
     demo, notify, webhook,
-    apiKey: env.DEEPSEEK_API_KEY?.trim() || '', model: env.DEEPSEEK_MODEL || 'deepseek-chat',
-    store: { name: env.STORE_NAME || 'Sunny Tea House', city: env.STORE_CITY || 'San Jose' },
+    apiKey, model: String(env.DEEPSEEK_MODEL || 'deepseek-chat').trim() || 'deepseek-chat',
+    store,
     urls: {
-      Google: platformUrl(env.GOOGLE_REVIEW_URL, ['google.com', 'g.page', 'maps.app.goo.gl'], 'GOOGLE_REVIEW_URL'),
+      Google: googleUrl,
       小红书: platformUrl(env.XIAOHONGSHU_URL || 'https://www.xiaohongshu.com/', ['xiaohongshu.com', 'xhslink.com'], 'XIAOHONGSHU_URL'),
     },
   };

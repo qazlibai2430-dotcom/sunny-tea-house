@@ -4,6 +4,7 @@ test.use({ locale: 'zh-CN' });
 
 test('桌面：标签限制、生成、编辑、复制与平台切换', async ({ page, context }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await context.route('https://www.google.com/**', route => route.fulfill({ contentType: 'text/html; charset=utf-8', body: '<p>google store</p>' }));
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto('/');
   const generate = page.getByRole('button', { name: '生成我的评价' });
@@ -17,12 +18,12 @@ test('桌面：标签限制、生成、编辑、复制与平台切换', async ({
   await expect(page.getByRole('textbox', { name: '评价内容' })).toHaveValue(/friendly/);
   await page.getByRole('textbox', { name: '评价内容' }).fill('The service was friendly. My order was ready quickly.');
   await page.getByRole('checkbox').check();
-  await page.getByRole('button', { name: '复制评价文案' }).click();
+  await page.getByRole('button', { name: /复制文案并打开平台/ }).click();
   await expect(page.getByRole('status')).toContainText('文案已复制');
   expect(await page.evaluate(() => navigator.clipboard.readText())).toContain('friendly');
   await page.getByRole('radio', { name: /小红书/ }).check();
   await expect(page.getByText('标签或平台已更改')).toBeVisible();
-  await expect(page.getByRole('button', { name: '复制评价文案' })).toBeDisabled();
+  await expect(page.getByRole('button', { name: /复制文案并打开平台/ })).toBeDisabled();
   await page.getByRole('button', { name: '重新生成评价' }).click();
   await expect(page.getByRole('textbox', { name: '评价内容' })).toHaveValue(/服务好、出餐快/);
   await expect(page.getByRole('textbox', { name: '评价内容' })).not.toHaveValue(/friendly/);
@@ -51,8 +52,9 @@ test('复制后打开平台，弹窗拦截时提供手动链接', async ({ page,
   await expect(page.getByRole('link', { name: /手动打开/ })).toHaveAttribute('href', 'https://www.xiaohongshu.com/');
 });
 
-test('失败保留编辑内容，复制失败提供手动方法', async ({ page }) => {
+test('失败保留编辑内容，复制失败提供手动方法', async ({ page, context }) => {
   await page.goto('/');
+  await context.route('https://www.google.com/**', route => route.fulfill({ contentType: 'text/html; charset=utf-8', body: '<p>google store</p>' }));
   await page.getByRole('button', { name: '服务好' }).click();
   await page.getByRole('button', { name: '生成我的评价' }).click();
   await expect(page.getByRole('textbox')).toHaveValue(/friendly/);
@@ -63,7 +65,7 @@ test('失败保留编辑内容，复制失败提供手动方法', async ({ page 
   await expect(page.getByRole('textbox')).toHaveValue('已修改的内容');
   await page.evaluate(() => Object.defineProperty(navigator.clipboard, 'writeText', { value: () => Promise.reject(new Error('denied')) }));
   await page.getByRole('checkbox').check();
-  await page.getByRole('button', { name: '复制评价文案' }).click();
+  await page.getByRole('button', { name: /复制文案并打开平台/ }).click();
   await expect(page.getByRole('status')).toContainText('自动复制不可用');
 });
 
